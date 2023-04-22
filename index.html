@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<style>
+    body {
+        margin: 0;
+        padding: 0;
+    }
+
+    .container {
+        background: rgba(72, 219, 251, 0.5);
+        width: 100%;
+        height: 100vh;
+        position: relative;
+        text-align: center;
+    }
+
+    #canvas {
+        margin-top: 40px;
+    }
+
+    h1 {
+        text-transform: uppercase;
+        font-weight: 600;
+        color: whitesmoke;
+        font-family: 'Courier New', Courier, monospace;
+        display: flex;
+        justify-content: start;
+    }
+
+    .content {
+        background: rgba(135, 206, 250, 0);
+        width: 900px;
+        height: 500px;
+        position: absolute;
+        top: 0;
+        left: 50%;
+        /* transform: translate(-50%,-100%); */
+        /* filter:opacity(0); */
+        margin-top: 40px;
+        transform: translate(-50%);
+    }
+
+    .active {
+        /* filter:opacity(0.7); */
+        background: rgba(135, 206, 250, 0.7);
+        transition: 1s;
+        /* margin-top:40px;
+        transform: translate(-50%); */
+    }
+
+    .active button {
+        display: inline-block;
+    }
+
+    button {
+        width: 200px;
+        height: 100px;
+        background: rgb(139, 196, 55);
+        border: none;
+        border-radius: 5px;
+        display: none;
+        font-size: 20px;
+        text-transform: uppercase;
+        font-weight: 600;
+        color: white;
+    }
+
+    .active_score {
+        display: block;
+        margin-top: 150px;
+    }
+</style>
+
+<body>
+    <div class="container">
+        <canvas width="900" height="500" id="canvas"></canvas>
+        <div class="content">
+            <div>
+                <h1 id="score"></h1>
+                <button onclick="handle_again()">Play again</button>
+            </div>
+        </div>
+    </div>
+    <script>
+        let c = document.querySelector("canvas")
+        let ctx = c.getContext("2d")
+        let arr = [c.width]
+        let y = c.height / 2
+        let point = 0;
+        let testY=170;
+        let content = document.querySelector(".content")
+        let random = ((min, max) => {
+            min = Math.ceil(min);
+            max = Math.floor(max);
+            return Math.floor(Math.random() * (max - min) + min);
+        });
+        for (let index = 0; index < 10; index++) {
+            // console.log(random(10, 30))
+        };
+        function show() {
+            y += 1
+            let bg = new Image();
+            let chimney1 = new Image()
+            let chimney2 = new Image()
+            let bird = new Image()
+            bg.src = "images/bg_flappyBird.jpg"
+            chimney1.src = "images/chimney1.png"
+            chimney2.src = "images/chimney2.png"
+            bird.src = "images/bird.png"
+            ctx.drawImage(bg, 0, 0, c.width, c.height)
+            ctx.drawImage(bird, c.width / 5, y, 40, 40)
+           
+            for (index = 0; index < arr.length; index++) {
+                ctx.drawImage(chimney1, arr[index], 0, 40, testY)
+                ctx.drawImage(chimney2, arr[index], c.height - testY, 40, testY)
+                arr[index] -= 2
+                if (arr[index] == c.width / 2) {
+                    arr = [...arr, c.width];
+                }
+                if (arr[index] == -20) {
+                    arr.splice(0, 1)
+                }
+                if (arr[index] == c.width / 5 - 30) {
+                    point += 10
+                    score.innerHTML = `Score: ${point}`
+                }
+                if (y > 460 || y < 0) {
+                    score.innerHTML = `Score: ${point}`
+                    score.classList.add("active_score")
+                    return content.classList.add("active")
+                }
+                if (c.width / 5 == arr[index] && y <= testY) {
+                    score.innerHTML = `Score: ${point}`
+                    score.classList.add("active_score")
+                    return content.classList.add("active")
+                }
+                if (c.width / 5 == arr[index] && y >= c.height - testY) {
+                    score.innerHTML = `Score: ${point}` 
+                    score.classList.add("active_score")
+                    return content.classList.add("active")
+                }
+            }
+            requestAnimationFrame(show)
+        }
+        document.addEventListener("keydown", () => { y -= 40 })
+        // setInterval(show,100)
+        show()
+        function handle_again() {
+            location.reload()
+        }
+    </script>
+</body>
+
+</html>
